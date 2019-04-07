@@ -163,20 +163,12 @@ func main() {
 	fmt.Printf("\n加载课表中。。。\n")
 	time.Sleep(1 * time.Second)
 	// 第三次请求
-	formValues = make(url.Values)
-	formValues.Set("ignoreHead", "1")
-	formValues.Set("showPrintAndExport", "1")
-	formValues.Set("setting.kind", "std")
-	formValues.Set("startWeek", "")
-	formValues.Set("semester.id", "30")
-	formValues.Set("ids", "39437")
-	req, err = http.NewRequest(http.MethodPost, "http://219.216.96.4/eams/courseTableForStd!courseTable.action", strings.NewReader(formValues.Encode()))
+	req, err = http.NewRequest(http.MethodGet, "http://219.216.96.4/eams/courseTableForStd.action", nil)
 	if err != nil {
 		fmt.Println("ERROR_9: ", err.Error())
 		return
 	}
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0")
+
 	resp3, err := client.Do(req)
 	if err != nil {
 		fmt.Println("ERROR_10: ", err.Error())
@@ -191,8 +183,45 @@ func main() {
 	}
 
 	temp = string(content)
+	if !strings.Contains(temp, "bg.form.addInput(form,\"ids\",\"") {
+		fmt.Println("ERROR_12: GET ids Failed")
+		return
+	}
+	temp = temp[strings.Index(temp, "bg.form.addInput(form,\"ids\",\"")+29 : strings.Index(temp, "bg.form.addInput(form,\"ids\",\"")+50]
+	ids := temp[:strings.Index(temp, "\");")]
+
+	time.Sleep(1 * time.Second)
+	// 第四次请求
+	formValues = make(url.Values)
+	formValues.Set("ignoreHead", "1")
+	formValues.Set("showPrintAndExport", "1")
+	formValues.Set("setting.kind", "std")
+	formValues.Set("startWeek", "")
+	formValues.Set("semester.id", "30")
+	formValues.Set("ids", ids)
+	req, err = http.NewRequest(http.MethodPost, "http://219.216.96.4/eams/courseTableForStd!courseTable.action", strings.NewReader(formValues.Encode()))
+	if err != nil {
+		fmt.Println("ERROR_13: ", err.Error())
+		return
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0")
+	resp4, err := client.Do(req)
+	if err != nil {
+		fmt.Println("ERROR_14: ", err.Error())
+		return
+	}
+	defer resp4.Body.Close()
+
+	content, err = ioutil.ReadAll(resp4.Body)
+	if err != nil {
+		fmt.Println("ERROR_15: ", err.Error())
+		return
+	}
+
+	temp = string(content)
 	if !strings.Contains(temp, "课表格式说明") {
-		fmt.Println("ERROR_12: Get Courses Failed")
+		fmt.Println("ERROR_16: Get Courses Failed")
 		return
 	}
 
@@ -222,19 +251,19 @@ func main() {
 
 	fmt.Printf("\n注销中。。。\n")
 	time.Sleep(1 * time.Second)
-	// 第四次请求
+	// 第五次请求
 	req, err = http.NewRequest(http.MethodGet, "http://219.216.96.4/eams/logout.action", nil)
 	if err != nil {
-		fmt.Println("ERROR_13: ", err.Error())
+		fmt.Println("ERROR_17: ", err.Error())
 		return
 	}
 
-	resp4, err := client.Do(req)
+	resp5, err := client.Do(req)
 	if err != nil {
-		fmt.Println("ERROR_14: ", err.Error())
+		fmt.Println("ERROR_18: ", err.Error())
 		return
 	}
-	defer resp4.Body.Close()
+	defer resp5.Body.Close()
 
 	fmt.Printf("\n生成中。。。\n")
 	// 生成ics文件用于导入
@@ -260,7 +289,7 @@ END:VTIMEZONE` + "\n"
 	// 本学期第一周开始时间
 	location, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
-		fmt.Println("ERROR_15: ", err.Error())
+		fmt.Println("ERROR_19: ", err.Error())
 		return
 	}
 	// 2019-03-03，校历第一周周日
@@ -368,7 +397,7 @@ END:VEVENT` + "\n"
 	// 写入文件
 	err = ioutil.WriteFile("./myCourses.ics", []byte(icsData), 0644)
 	if err != nil {
-		fmt.Println("ERROR_16: ", err.Error())
+		fmt.Println("ERROR_20: ", err.Error())
 		return
 	}
 }
