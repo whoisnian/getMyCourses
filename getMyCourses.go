@@ -288,11 +288,11 @@ END:STANDARD
 END:VTIMEZONE` + "\n"
 
 	// 本学期第一周开始时间
-	location, err := time.LoadLocation("Asia/Shanghai")
-	if err != nil {
+	location := time.FixedZone("UTC+8", 8*60*60)
+	/*if err != nil {
 		fmt.Println("ERROR_19: ", err.Error())
 		return
-	}
+	}*/
 	// 2019-03-03，校历第一周周日
 	SchoolStartDay := time.Date(2019, time.March, 3, 0, 0, 0, 0, location)
 
@@ -396,7 +396,7 @@ END:VEVENT` + "\n"
 	//fmt.Println(icsData)
 
 	// 写入文件
-	err = ioutil.WriteFile("./myCourses.ics", []byte(icsData), 0644)
+	err = ioutil.WriteFile("myCourses.ics", []byte(icsData), 0644)
 	if err != nil {
 		fmt.Println("ERROR_20: ", err.Error())
 		return
