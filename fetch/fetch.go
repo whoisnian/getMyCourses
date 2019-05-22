@@ -13,7 +13,7 @@ import (
 
 // 获取课程表所在页面源代码
 func FetchCourses(cookieJar *cookiejar.Jar) (string, error) {
-	fmt.Println("FetchCourses")
+	fmt.Println("\n获取课表详情中。。。")
 
 	// http 请求客户端
 	var client http.Client
@@ -83,6 +83,6 @@ func FetchCourses(cookieJar *cookiejar.Jar) (string, error) {
 		return "", errors.New("获取课表失败")
 	}
 
-	fmt.Println("FetchCourses Finished")
+	fmt.Println("获取课表详情完成。")
 	return temp, nil
 }

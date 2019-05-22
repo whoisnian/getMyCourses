@@ -15,7 +15,7 @@ import (
 
 // 树维教务系统登录：http://219.216.96.4/eams/loginExt.action
 func LoginViaSupwisdom(username string, password string) (*cookiejar.Jar, error) {
-	fmt.Println("LoginViaSupwisdom")
+	fmt.Println("\n树维教务系统登录中。。。")
 
 	// Cookie 自动维护
 	cookieJar, err := cookiejar.New(nil)
@@ -49,7 +49,7 @@ func LoginViaSupwisdom(username string, password string) (*cookiejar.Jar, error)
 	// 检查
 	temp := string(content)
 	if !strings.Contains(temp, "CryptoJS.SHA1(") {
-		return nil, errors.New("读取登录页面失败 http://219.216.96.4/eams/loginExt.action")
+		return nil, errors.New("登录页面打开失败，请检查 http://219.216.96.4/eams/loginExt.action")
 	}
 
 	// 对密码进行SHA1哈希
@@ -91,13 +91,16 @@ func LoginViaSupwisdom(username string, password string) (*cookiejar.Jar, error)
 		return nil, errors.New("登录失败，请检查用户名和密码")
 	}
 
-	fmt.Println("LoginViaSupwisdom Finished")
+	temp = temp[strings.Index(temp, "class=\"personal-name\">")+23 : strings.Index(temp, "class=\"personal-name\">")+60]
+	fmt.Println(temp[:strings.Index(temp, ")")+1])
+
+	fmt.Println("树维教务系统登录完成。")
 	return cookieJar, nil
 }
 
 // 统一身份认证：https://pass.neu.edu.cn
 func LoginViaTpass(username string, password string) (*cookiejar.Jar, error) {
-	fmt.Println("LoginViaTpass")
+	fmt.Println("统一身份认证登录中。。。")
 	return nil, errors.New("LoginViaTpass 404")
-	//fmt.Println("LoginViaTpass Finished")
+	//fmt.Println("统一身份登录认证登录完成。")
 }

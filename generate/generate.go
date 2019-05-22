@@ -100,8 +100,9 @@ var dayOfWeek = []string{
 	"SU",
 }
 
+// 从html源码生成ics文件内容
 func GenerateIcs(html string) (string, error) {
-	fmt.Println("GenerateIcs")
+	fmt.Println("\n生成ics文件中。。。")
 	// 利用正则匹配有效信息
 	var myCourses []Course
 	reg1 := regexp.MustCompile(`TaskActivity\(actTeacherId.join\(','\),actTeacherName.join\(','\),"(.*)","(.*)\(.*\)","(.*)","(.*)","(.*)",null,null,assistantName,"",""\);((?:\s*index =\d+\*unitCount\+\d+;\s*.*\s)+)`)
@@ -126,7 +127,7 @@ func GenerateIcs(html string) (string, error) {
 		myCourses = append(myCourses, course)
 	}
 
-	// 生成ics文件用于导入
+	// 生成ics文件头
 	var icsData string
 	icsData = `BEGIN:VCALENDAR
 PRODID:-//nian//getMyCourses 20190522//EN
@@ -169,10 +170,10 @@ END:VTIMEZONE` + "\n"
 
 		// debug信息
 		num++
-		//fmt.Println("")
-		//fmt.Println(num)
-		//fmt.Println(course.courseName)
-		//fmt.Println("周" + strconv.Itoa(weekDay) + " 第" + strconv.Itoa(st+1) + "-" + strconv.Itoa(en+1) + "节")
+		fmt.Println("")
+		fmt.Println(num)
+		fmt.Println(course.courseName)
+		fmt.Println("周" + strconv.Itoa(weekDay) + " 第" + strconv.Itoa(st+1) + "-" + strconv.Itoa(en+1) + "节")
 
 		// 统计要上课的周
 		var periods []string
@@ -186,7 +187,7 @@ END:VTIMEZONE` + "\n"
 				startWeek = append(startWeek, i)
 				periods = append(periods, "RRULE:FREQ=WEEKLY;WKST=SU;COUNT=1;INTERVAL=1;BYDAY="+byday)
 				// debug信息
-				//fmt.Println("第" + strconv.Itoa(i) + "周")
+				fmt.Println("第" + strconv.Itoa(i) + "周")
 				continue
 			}
 			if course.weeks[i+1] == '1' {
@@ -200,7 +201,7 @@ END:VTIMEZONE` + "\n"
 				startWeek = append(startWeek, i)
 				periods = append(periods, "RRULE:FREQ=WEEKLY;WKST=SU;COUNT="+strconv.Itoa(j-i)+";INTERVAL=1;BYDAY="+byday)
 				// debug信息
-				//fmt.Println("第" + strconv.Itoa(i) + "-" + strconv.Itoa(j-1) + "周")
+				fmt.Println("第" + strconv.Itoa(i) + "-" + strconv.Itoa(j-1) + "周")
 				i = j - 1
 			} else {
 				// 单双周合并
@@ -213,17 +214,17 @@ END:VTIMEZONE` + "\n"
 				startWeek = append(startWeek, i)
 				periods = append(periods, "RRULE:FREQ=WEEKLY;WKST=SU;COUNT="+strconv.Itoa((j+1-i)/2)+";INTERVAL=2;BYDAY="+byday)
 				// debug信息
-				/*if i%2 == 0 {
+				if i%2 == 0 {
 					fmt.Printf("双")
 				} else {
 					fmt.Printf("单")
 				}
-				fmt.Println(strconv.Itoa(i) + "-" + strconv.Itoa(j-1) + "周")*/
+				fmt.Println(strconv.Itoa(i) + "-" + strconv.Itoa(j-1) + "周")
 				i = j - 1
 			}
 		}
 
-		// 生成EVENT
+		// 生成ics文件中的EVENT
 		for i := 0; i < len(periods); i++ {
 			var eventData string
 			eventData = `BEGIN:VEVENT` + "\n"
@@ -254,6 +255,6 @@ END:VEVENT` + "\n"
 	}
 	icsData = icsData + `END:VCALENDAR`
 
-	fmt.Println("GenerateIcs Finished")
+	fmt.Println("\n生成ics文件完成。")
 	return icsData, nil
 }
