@@ -1,5 +1,5 @@
 # getMyCourses
-从NEU新版树维教务系统获取自己的课程表，并生成可导入日历的.ics文件。
+从NEU新版教务系统获取自己的课程表，并生成可导入日历的.ics文件。
 
 ## 使用方法
 * 下载[Release](https://github.com/whoisnian/getMyCourses/releases/latest)后解压，在命令行环境下运行。
@@ -13,4 +13,10 @@
 
 ## 注意
 * 生成.ics文件过程中会在命令行输出获取到的课程，请检查无误后再进行导入。
-* 当前已测试可成功导入.ics文件的日历：Google 日历，Mac 系统日历，Win10 UWP 系统日历。（Win10 UWP 日历缺少批量删除功能）
+* 当前已测试可成功导入.ics文件的日历：Google 日历，Outlook 日历，Mac 系统日历，Win10 UWP 系统日历。
+* Win10 UWP 日历缺少批量删除功能，可以关联 Outlook 帐户后使用 Outlook 帐户新建一个日历单独用于存储课程表。
+
+## 效果图
+![kde](screenshots/kde.png)
+![win10](screenshots/win10.png)
+![mac](screenshots/mac.png)
