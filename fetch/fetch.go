@@ -46,6 +46,7 @@ func FetchCourses(cookieJar *cookiejar.Jar) (string, error) {
 	}
 	temp = temp[strings.Index(temp, "bg.form.addInput(form,\"ids\",\"")+29 : strings.Index(temp, "bg.form.addInput(form,\"ids\",\"")+50]
 	ids := temp[:strings.Index(temp, "\");")]
+	semesterId := resp1.Cookies()[0].Value
 
 	// 第二次请求
 	time.Sleep(1 * time.Second)
@@ -54,7 +55,7 @@ func FetchCourses(cookieJar *cookiejar.Jar) (string, error) {
 	formValues.Set("showPrintAndExport", "1")
 	formValues.Set("setting.kind", "std")
 	formValues.Set("startWeek", "")
-	formValues.Set("semester.id", "30")
+	formValues.Set("semester.id", semesterId)
 	formValues.Set("ids", ids)
 
 	req, err = http.NewRequest(http.MethodPost, "http://219.216.96.4/eams/courseTableForStd!courseTable.action", strings.NewReader(formValues.Encode()))
