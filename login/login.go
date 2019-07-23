@@ -153,7 +153,7 @@ func LoginViaTpass(username string, password string) (*cookiejar.Jar, error) {
 	}
 
 	// 提取表单信息
-	reg1 := regexp.MustCompile(`id="loginForm" action="(/tpass/login;jsessionid=[^"]*)`)
+	reg1 := regexp.MustCompile(`id="loginForm" action="(/tpass/login[^"]*)`)
 	form_action := "https://pass.neu.edu.cn" + reg1.FindStringSubmatch(temp)[1]
 	reg2 := regexp.MustCompile(`id="lt" name="lt" value="([^"]*)`)
 	form_lt := reg2.FindStringSubmatch(temp)[1]
