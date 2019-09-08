@@ -148,9 +148,9 @@ END:STANDARD
 END:VTIMEZONE` + "\n"
 
 	// 本学期第一周开始时间
-	// 2019-03-03，校历第一周周日
+	// 2019-09-08，校历第一周周日
 	location := time.FixedZone("UTC+8", 8*60*60)
-	SchoolStartDay := time.Date(2019, time.March, 3, 0, 0, 0, 0, location)
+	SchoolStartDay := time.Date(2019, time.September, 8, 0, 0, 0, 0, location)
 
 	num := 0
 	for _, course := range myCourses {

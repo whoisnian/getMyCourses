@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"getMyCourses/fetch"
-	"getMyCourses/generate"
-	"getMyCourses/login"
+	"github.com/whoisnian/getMyCourses/fetch"
+	"github.com/whoisnian/getMyCourses/generate"
+	"github.com/whoisnian/getMyCourses/login"
 	"io/ioutil"
 	"net/http/cookiejar"
 	"path/filepath"
