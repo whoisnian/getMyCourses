@@ -101,7 +101,7 @@ var dayOfWeek = []string{
 }
 
 // 从html源码生成ics文件内容
-func GenerateIcs(html string) (string, error) {
+func GenerateIcs(html string, schoolStartDay time.Time) (string, error) {
 	fmt.Println("\n生成ics文件中。。。")
 	// 利用正则匹配有效信息
 	var myCourses []Course
@@ -147,11 +147,6 @@ DTSTART:19700101T000000
 END:STANDARD
 END:VTIMEZONE` + "\n"
 
-	// 本学期第一周开始时间
-	// 2019-09-08，校历第一周周日
-	location := time.FixedZone("UTC+8", 8*60*60)
-	SchoolStartDay := time.Date(2019, time.September, 8, 0, 0, 0, 0, location)
-
 	num := 0
 	for _, course := range myCourses {
 		var weekDay, st, en int
@@ -173,7 +168,7 @@ END:VTIMEZONE` + "\n"
 		fmt.Println("")
 		fmt.Println(num)
 		fmt.Println(course.courseName)
-		fmt.Println("周" + strconv.Itoa(weekDay) + " 第" + strconv.Itoa(st+1) + "-" + strconv.Itoa(en+1) + "节")
+		fmt.Println("周" + strconv.Itoa(weekDay+1) + " 第" + strconv.Itoa(st+1) + "-" + strconv.Itoa(en+1) + "节")
 
 		// 统计要上课的周
 		var periods []string
@@ -228,7 +223,7 @@ END:VTIMEZONE` + "\n"
 		for i := 0; i < len(periods); i++ {
 			var eventData string
 			eventData = `BEGIN:VEVENT` + "\n"
-			startDate := SchoolStartDay.AddDate(0, 0, (startWeek[i]-1)*7+weekDay+1)
+			startDate := schoolStartDay.AddDate(0, 0, (startWeek[i]-1)*7+weekDay+1)
 
 			if strings.Contains(course.roomName, "浑南") {
 				eventData = eventData + `DTSTART;TZID=Asia/Shanghai:` + startDate.Format("20060102T") + ClassStartTimeHunnan[st] + "\n"

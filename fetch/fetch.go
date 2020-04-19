@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -86,4 +88,47 @@ func FetchCourses(cookieJar *cookiejar.Jar) (string, error) {
 
 	fmt.Println("获取课表详情完成。")
 	return temp, nil
+}
+
+// 获取当前教学周
+func FetchLearnWeek(cookieJar *cookiejar.Jar) (int, error) {
+	fmt.Println("\n获取当前教学周中。。。")
+
+	// http 请求客户端
+	var client http.Client
+	client.Jar = cookieJar
+
+	req, err := http.NewRequest(http.MethodGet, "http://219.216.96.4/eams/homeExt.action", nil)
+	if err != nil {
+		return 0, err
+	}
+
+	// 发送
+	resp1, err := client.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp1.Body.Close()
+
+	// 读取
+	content, err := ioutil.ReadAll(resp1.Body)
+	if err != nil {
+		return 0, err
+	}
+
+	// 检查
+	temp := string(content)
+	if !strings.Contains(temp, "教学周") {
+		return 0, errors.New("获取教学周失败")
+	}
+	temp = temp[strings.Index(temp, "id=\"teach-week\">") : strings.Index(temp, "教学周")+10]
+
+	reg := regexp.MustCompile(`学期\s*<font size="\d+px">(\d+)<\/font>\s*教学周`)
+	res := reg.FindStringSubmatch(temp)
+	if len(res) < 2 {
+		return 0, errors.New(temp + " 中未匹配到教学周")
+	}
+
+	fmt.Println("获取当前教学周完成。")
+	return strconv.Atoi(res[1])
 }
